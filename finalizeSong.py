@@ -4,34 +4,38 @@ import numpy as np
 import shutil
 
 
-def finalizeSong(dirRoot, fileRoot, old_file_name, fileLocation, newFileName, folderPath, songTags):
+def finalizeSong(fileRoot, oldFileName, fileLocation, newFileName, folderPath, songTags):
+    dirRoot = os.getcwd() + "/"
     src_dir = fileRoot
     pathToFile = fileRoot.replace(dirRoot, '')
+    print(pathToFile)
 
     newFileName = cleanFileName(newFileName)
 
-    if not os.path.exists(dirRoot + "pathsToSongs.npy"):
+    """ if not os.path.exists(dirRoot + "pathsToSongs.npy"):
         pathsToSongs = {"dirRoot": dirRoot}
         np.save(dirRoot + "pathsToSongs.npy", pathsToSongs)
     else:
         pathsToSongs = np.load(
-            dirRoot + "pathsToSongs.npy", allow_pickle=True).item()
+            dirRoot + "pathsToSongs.npy", allow_pickle=True).item() """
 
     if folderPath == "finished":
-        if not os.path.exists(dirRoot + folderPath + "/" + pathToFile):
-            os.makedirs(dirRoot + folderPath + "/" + pathToFile)
-        dst_dir = dirRoot + folderPath + "/" + pathToFile
+        path = dirRoot + folderPath + "/" + \
+            songTags["artist"] + "/" + songTags["album"]
+        if not os.path.exists(path):
+            os.makedirs(path)
+        dst_dir = path
     else:
         if not os.path.exists(dirRoot + folderPath + "/"):
             os.makedirs(dirRoot + folderPath + "/")
         dst_dir = dirRoot + folderPath + "/"
 
-        pathsToSongs[newFileName] = pathToFile
-        np.save(dirRoot + "pathsToSongs.npy", pathsToSongs)
+        """ pathsToSongs[newFileName] = pathToFile
+        np.save(dirRoot + "pathsToSongs.npy", pathsToSongs) """
 
-    src_file = os.path.join(src_dir, old_file_name)
+    src_file = os.path.join(src_dir, oldFileName)
     shutil.copy(src_file, dst_dir)
-    dst_file = os.path.join(dst_dir, old_file_name)
+    dst_file = os.path.join(dst_dir, oldFileName)
     new_dst_file_name = os.path.join(dst_dir, newFileName)
 
     try:
@@ -41,10 +45,10 @@ def finalizeSong(dirRoot, fileRoot, old_file_name, fileLocation, newFileName, fo
             f = open(dirRoot + "/songIssues.txt", "w")
         else:
             f = open(dirRoot + "/songIssues.txt", "a")
-        f.write("title = " + songTags[title] + "\n")
-        f.write("artist = " + songTags[artist] + "\n")
+        #f.write("title = " + songTags[title] + "\n")
+        #f.write("artist = " + songTags[artist] + "\n")
         f.write("destination file name - " + src_dir +
-                "  ---  " + old_file_name + "\n")
+                "  ---  " + oldFileName + "\n")
         f.write("new file name" + new_dst_file_name)
         f.write("\n")
 
